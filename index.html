@@ -3,6 +3,7 @@
 <head>
 	<title></title>
 	<script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+	<script type="text/javascript" src="./jquery-ui.min.js"></script>
 	<style type="text/css">
 
 		@import url('https://fonts.googleapis.com/css2?family=Teko:wght@700&display=swap');
@@ -30,6 +31,10 @@
 			margin: 20px;
 			border-radius: 50px;
 			display: inline-block;
+
+			
+			position: relative;
+			transition: transform 0.5s;
 		}
 
 		.rails{
@@ -95,6 +100,39 @@
 			color: orange;
 		}
 
+		.enemy:before{
+			content: "▲";
+			line-height: -40px;
+			display: block;
+			width: 100%;
+			top:-10px;
+			line-height: 30px;
+			font-size: 30px;
+			color: orange;
+			position: absolute;
+		}
+
+		.enemy:after{
+			content: "^";
+			line-height: 40px;
+			display: block;
+			width: 100%;
+			bottom:-20px;
+			line-height: 30px;
+			font-size: 70px;
+			color: orange;
+			position: absolute;
+	
+		}
+
+		.enemy.lefting{
+			transform: rotate(-45deg);
+		}
+
+		.enemy.righting{
+			transform: rotate(45deg);
+		}
+
 
 	</style>
 	<script type="text/javascript">
@@ -102,6 +140,24 @@
 			for(var i=0; i<20; i++){
 				$('<div class="enemy">').appendTo('.armada');
 			}
+
+			var middle = $(window).innerWidth()/2;
+
+			$('.enemy').each(function(){
+
+				var oy = $(this).offset().top;
+				var ox = $(this).offset().left - middle;
+
+				//if(ox < 50 && ox > -50) ox = 100;
+
+				var dir = (ox>0)?1:-1;
+				var type = dir==1?'lefting':'righting';
+				
+				$(this).addClass(type).css({left:55*dir+'vw',top:20}).delay(Math.abs(ox) + oy*100 + dir*1500 - 4000).animate({left:50*dir},5000,'linear',function(){
+					$(this).removeClass(type);
+				}).animate({left:0,top:-20},500,'linear').animate({left:0,top:0},500,'swing')
+				
+			})
 
 			var shotAtTime = new Date().getTime();
 			var hitAtTime = shotAtTime;
